@@ -171,8 +171,11 @@ MainDisplay.prototype.milliSecondsToThreeArray = function (milliSecondsInput)
 		roundup = !roundup;
 	}
 	
-	if(milliSecondsInput >= Math.pow(10, firstAreaDigits) * 60000) {
-		var remainSec = Math.floor((milliSecondsInput + 999 * roundup) / 1000 );
+	var milliseconds = Math.floor((milliSecondsInput - 1 * roundup) / Math.pow(10, 3-subSecondDigits) + 1 * roundup) * Math.pow(10, 3-subSecondDigits);
+	var remainSec = Math.floor(milliseconds / 1000 );
+
+	if(remainSec >= Math.pow(10, firstAreaDigits) * 60) {
+		remainSec = Math.floor((milliSecondsInput + 999 * roundup) / 1000 );
 		return new Array (
 				Math.floor(remainSec / 3600),
 				Math.floor(Math.floor(remainSec / 60) % 60),
@@ -180,10 +183,6 @@ MainDisplay.prototype.milliSecondsToThreeArray = function (milliSecondsInput)
 				);
 
 	} else {
-		var milliseconds = Math.floor((milliSecondsInput - 1 * roundup) / Math.pow(10, 3-subSecondDigits) + 1 * roundup) * Math.pow(10, 3-subSecondDigits);
-
-		var remainSec = Math.floor(milliseconds / 1000 );
-
 		return new Array (
 				Math.floor(remainSec / 60),
 				Math.floor(remainSec % 60),

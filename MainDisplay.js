@@ -221,7 +221,7 @@ MainDisplay.prototype.refreshDisplay  = function ()
 			mainDisplay.updateDisplay(
 					disparray[0],disparray[1],disparray[2],
 					colon,
-					blinkAfterTime && remainingTime < 0 && (remainingTime % 1000 < -500),
+					blinkAfterTime && remainingTime < 0 && (remainingTime % 1000 < -500) && this.wallTimer.downtimerStatus() == STATUS_RUNNING,
 					remainingTime < warningThreshold * 1000,
 					running);
 

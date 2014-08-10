@@ -1,0 +1,92 @@
+/*
+@font-face {
+	font-family, use in font-family;
+	src: url("fontname.ttf");
+}
+*/
+
+span.digits {
+	font-family: Menlo, Courier New, monospace;
+	font-style: bold;
+}
+
+.statusbar {
+	font-family: Menlo, Courier New, monospace;
+	font-style: bold;
+}
+
+.modedisplay {
+	font-family: sans-serif;
+}
+
+.statusdisplay {
+	font-family: sans-serif;
+}
+
+body {
+	background-color: black;
+	text-align: center;
+}
+
+.normalcharacters {
+	color:yellow;
+}
+
+span.digits {
+	margin: 0;
+	padding: 0;
+	font-size: 1000%;
+	color: yellow;
+}
+
+span.small {
+	font-size: 700%;
+}
+
+div.warning span {
+	color: red;
+}
+
+div#modedisplay span {
+	color: yellow;
+}
+
+div#statusdisplay span {
+	color: yellow;
+}
+
+.lampenabled {
+	opacity: 1.0;
+}
+
+.lampdisabled {
+	opacity: 0.0;
+}
+
+.displayenabled {
+	opacity: 1.0;
+}
+
+.displaydisabled {
+	opacity: 0.0;
+}
+
+.modeactivated {
+	opacity: 1.0;
+}
+
+.modedeactivated {
+	opacity: 0.2;
+}
+
+.statusactivated {
+	opacity: 1.0;
+}
+
+.statusdeactivated {
+	opacity: 0.2;
+}
+
+.subdisplayhidden {
+	display: none;
+}

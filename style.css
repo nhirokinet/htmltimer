@@ -6,12 +6,12 @@
 */
 
 span.digits {
-	font-family: Menlo, Courier New, monospace;
+	font-family: Consolas, Menlo, Courier New, monospace;
 	font-style: bold;
 }
 
 .statusbar {
-	font-family: Menlo, Courier New, monospace;
+	font-family: Consolas, Menlo, Courier New, monospace;
 	font-style: bold;
 }
 
@@ -30,7 +30,7 @@ body {
 }
 
 .normalcharacters {
-	color:yellow;
+	color: yellow;
 }
 
 span.digits {
@@ -48,12 +48,20 @@ div.warning span {
 	color: red;
 }
 
-div#modedisplay span {
+div#statusdisplay span {
 	color: yellow;
 }
 
-div#statusdisplay span {
+div#buttonsdisplay a {
 	color: yellow;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+div#modedisplay a {
+	color: yellow;
+	text-decoration: underline;
+	cursor: pointer;
 }
 
 .lampenabled {

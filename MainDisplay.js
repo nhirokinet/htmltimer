@@ -5,10 +5,13 @@ const MODE_DEADLINE = 3;
 
 function MainDisplay() {};
 
-MainDisplay.prototype.fixDisplay = false;
 MainDisplay.prototype.fixDisplayContent = [0,0,0];
-
 MainDisplay.prototype.hideAll = false;
+MainDisplay.prototype.downtimerAlreadyExpired = false;
+MainDisplay.prototype.deadlinetimerAlreadyExpired = false;
+MainDisplay.prototype.firstAreaDigits = 2;
+MainDisplay.prototype.subSecondDigits = 2;
+
 MainDisplay.prototype.fillZero = function(input, digits)
 {
 	var ret = input.toString();
@@ -43,7 +46,7 @@ MainDisplay.prototype.rightestLimitTwoDigits = function ()
 
 MainDisplay.prototype.displayRightest = function ()
 {
-	if (this.rightestLimitTwoDigits() && subSecondDigits < 2) {
+	if (this.rightestLimitTwoDigits() && this.subSecondDigits < 2) {
 		return false;
 	}
 
@@ -135,9 +138,9 @@ MainDisplay.prototype.updateDisplay = function(display1, display2, display3, col
 			$('#maindisplay').removeClass('warning');
 		}
 
-		$('#maindisplay10').text(this.fillZero(display1, firstAreaDigits));
+		$('#maindisplay10').text(this.fillZero(display1, this.firstAreaDigits));
 		$('#maindisplay20').text(this.fillZero(display2, 2));
-		var rightD = subSecondDigits;
+		var rightD = this.subSecondDigits;
 		if (rightD>2 && this.rightestLimitTwoDigits()) {
 			rightD = 2;
 		}
@@ -152,7 +155,7 @@ MainDisplay.prototype.updateDisplay = function(display1, display2, display3, col
 			$('.colon').addClass('lampdisabled');
 		}
 
-		if(subSecondDigits == 0 || !this.displayRightest()) {
+		if(this.subSecondDigits == 0 || !this.displayRightest()) {
 			$('#maindisplay25').addClass('displaydisabled');
 			$('#maindisplay30').text("");
 
@@ -171,10 +174,10 @@ MainDisplay.prototype.milliSecondsToThreeArray = function (milliSecondsInput)
 		roundup = !roundup;
 	}
 	
-	var milliseconds = Math.floor((milliSecondsInput - 1 * roundup) / Math.pow(10, 3-subSecondDigits) + 1 * roundup) * Math.pow(10, 3-subSecondDigits);
+	var milliseconds = Math.floor((milliSecondsInput - 1 * roundup) / Math.pow(10, 3-this.subSecondDigits) + 1 * roundup) * Math.pow(10, 3-this.subSecondDigits);
 	var remainSec = Math.floor(milliseconds / 1000 );
 
-	if(remainSec >= Math.pow(10, firstAreaDigits) * 60) {
+	if(remainSec >= Math.pow(10, this.firstAreaDigits) * 60) {
 		remainSec = Math.floor((milliSecondsInput + 999 * roundup) / 1000 );
 		return new Array (
 				Math.floor(remainSec / 3600),
@@ -186,7 +189,7 @@ MainDisplay.prototype.milliSecondsToThreeArray = function (milliSecondsInput)
 		return new Array (
 				Math.floor(remainSec / 60),
 				Math.floor(remainSec % 60),
-				Math.floor(milliseconds % 1000 / Math.pow(10, 3-subSecondDigits))
+				Math.floor(milliseconds % 1000 / Math.pow(10, 3-this.subSecondDigits))
 				);
 	}
 	
@@ -209,15 +212,24 @@ MainDisplay.prototype.refreshDisplay  = function ()
 			var running = this.wallTimer.downtimerStatus() == STATUS_RUNNING;
 			var remainingTime = this.wallTimer.milliSecondsForDowntimer();
 			var disparray = this.milliSecondsToThreeArray(remainingTime);
+
+			if(remainingTime < 0) {
+				if (this.downtimerAlreadyExpired == false) {
+					this.downtimerAlreadyExpired = true;
+					this.expireSound.play();
+				}
+			}
+
 			var colon;
 			if(remainingTime>0) {
 				colon = remainingTime % 1000 >= 500;
 			} else {
 				colon = remainingTime % 1000 > -500;
 			}
+
 			colon = this.wallTimer.downtimerStatus() != STATUS_RUNNING || colon;;
 
-			mainDisplay.updateDisplay(
+			this.updateDisplay(
 					disparray[0],disparray[1],disparray[2],
 					colon,
 					blinkAfterTime && remainingTime < 0 && (remainingTime % 1000 < -500) && this.wallTimer.downtimerStatus() == STATUS_RUNNING,
@@ -234,15 +246,15 @@ MainDisplay.prototype.refreshDisplay  = function ()
 			if(remainingTime >= 0) {
 				var remainSec = Math.floor((remainingTime) / 1000 );
 
-				mainDisplay.updateDisplay(Math.floor(remainSec / 60),
+				this.updateDisplay(Math.floor(remainSec / 60),
 						Math.floor(remainSec % 60),
-						Math.floor(remainingTime%1000 / Math.pow(10, 3 - subSecondDigits)),
+						Math.floor(remainingTime%1000 / Math.pow(10, 3 - this.subSecondDigits)),
 						this.wallTimer.uptimerStatus() != STATUS_RUNNING || remainingTime%1000 < 500,
 						false, false, running);
 
 
 			} else {
-				mainDisplay.updateDisplay(0,0,0,true,false,false, running);
+				this.updateDisplay(0,0,0,true,false,false, running);
 			}
 
 			break;
@@ -250,15 +262,22 @@ MainDisplay.prototype.refreshDisplay  = function ()
 		case MODE_DEADLINE:
 			var remainingTime = this.wallTimer.milliSecondsForDeadline();
 			var disparray = this.milliSecondsToThreeArray(remainingTime);
-			var colon;
 
+			if(remainingTime < 0) {
+				if (this.deadlinetimerAlreadyExpired == false) {
+					this.deadlinetimerAlreadyExpired = true;
+					this.expireSound.play();
+				}
+			}
+
+			var colon;
 			if(remainingTime>0) {
 				colon = remainingTime % 1000 >= 500;
 			} else {
 				colon = remainingTime % 1000 > -500;
 			}
 
-			mainDisplay.updateDisplay(
+			this.updateDisplay(
 					disparray[0],disparray[1],disparray[2],
 					colon,
 					blinkAfterTime && remainingTime < 0 && (remainingTime % 1000 < -500),
@@ -268,3 +287,114 @@ MainDisplay.prototype.refreshDisplay  = function ()
 	}
 }
 
+MainDisplay.prototype.modeClock = function ()
+{
+	this.fixDisplay = false;
+	this.currentMode = MODE_CLOCK;
+	timerInput = '';
+	dltimerInput = '';
+}
+
+MainDisplay.prototype.modeDownTimer = function ()
+{
+	this.fixDisplay = false;
+	this.currentMode = MODE_DOWNTIMER;
+	timerInput = '';
+	dltimerInput = '';
+}
+
+MainDisplay.prototype.modeUpTimer = function ()
+{
+	this.fixDisplay = false;
+	this.currentMode = MODE_UPTIMER;
+	timerInput = '';
+	dltimerInput = '';
+}
+
+MainDisplay.prototype.modeDeadlineTimer = function ()
+{
+	if(this.wallTimer.deadlineTimerFinish == -1) {
+		this.fixDisplay = true;
+	} else {
+		this.fixDisplay = false;
+	}
+	this.currentMode = MODE_DEADLINE;
+	timerInput = '';
+	dltimerInput = '';
+}
+
+MainDisplay.prototype.reset = function()
+{
+	this.timerAlreadyExpired = false;
+	timerInput = '';
+	dltimerInput = '';
+	this.wallTimer.reset();
+}
+
+MainDisplay.prototype.startStop = function ()
+{
+	timerInput = '';
+	if(this.currentMode == MODE_DOWNTIMER) {
+		switch(this.wallTimer.downtimerStatus()) {
+			case STATUS_WAITING:
+				this.downtimerAlreadyExpired = false;
+				this.fixDisplay = false;
+				this.wallTimer.startDowntimer();
+				break;
+
+			case STATUS_RUNNING:
+				this.fixDisplay = false;
+				this.wallTimer.stopDowntimer();
+				break;
+
+			case STATUS_STOPPED:
+				if (this.wallTimer.downtimerTmpSeconds > 0) {
+					this.downtimerAlreadyExpired = false;
+				}
+				this.fixDisplay = false;
+				this.wallTimer.restartDowntimer();
+				break;
+		}
+	}
+
+	if(this.currentMode == MODE_UPTIMER) {
+		if(this.wallTimer.uptimerStatus() == STATUS_WAITING) {
+			this.fixDisplay = false;
+			this.wallTimer.startUptimer();
+		} else if(this.wallTimer.uptimerStatus() == STATUS_RUNNING) {
+			this.wallTimer.stopUptimer();
+		} else if(this.wallTimer.uptimerStatus() == STATUS_STOPPED) {
+			this.wallTimer.restartUptimer();
+		}
+	}
+
+	if(this.currentMode == MODE_DEADLINE) {
+		if (this.fixDisplay) {
+			if (this.wallTimer.milliSecondsForDeadline() > 0) {
+				this.deadlinetimerAlreadyExpired = false;
+			}
+			this.fixDisplay = false;
+		} else {
+			dltimerInput = '';
+			this.fixDisplay = true;
+		}
+	}
+}
+
+MainDisplay.prototype.toggleSubSeconds = function ()
+{
+	if(this.subSecondDigits == 2) {
+		this.subSecondDigits = 0;
+	} else if(this.subSecondDigits == 0) {
+		this.subSecondDigits = 2;
+	}
+}
+
+MainDisplay.prototype.toggleFirstAreaDigits = function ()
+{
+	if(this.firstAreaDigits == 2) {
+		this.firstAreaDigits = 1;
+	} else if(this.firstAreaDigits == 1) {
+		this.firstAreaDigits = 2;
+	}
+}

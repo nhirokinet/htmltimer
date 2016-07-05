@@ -26,14 +26,18 @@
 
 <div class="subdisplay">
 	<div id="modedisplay">
-		<span class="mode-clock">CLOCK(C)</span>
-		<span class="mode-downtimer">DOWNTIMER(D)</span>
-		<span class="mode-uptimer">UPTIMER(U)</span>
-		<span class="mode-deadline">DEADLINE(L)</span>
+		<a class="mode-clock" onclick="mainDisplay.modeClock();">CLOCK(C)</a>
+		<a class="mode-downtimer" onclick="mainDisplay.modeDownTimer();">DOWNTIMER(C)</a>
+		<a class="mode-uptimer" onclick="mainDisplay.modeUpTimer();">UPTIMER(U)</a>
+		<a class="mode-deadline" onclick="mainDisplay.modeDeadlineTimer();">DEADNLINE(L)</a>
 	</div>
 	<div id="statusdisplay">
 		<span class="status-running">RUNNING</span>
 		<span class="status-stopped">STOPPED</span>
+	</div>
+	<div id="buttonsdisplay">
+		<a onclick="mainDisplay.startStop();">START/STOP</a>
+		<a onclick="mainDisplay.reset();">RESET</a>
 	</div>
 
 	<div>
@@ -46,12 +50,12 @@ If you see keyboard cursor on Firefox, Press F7 on the browser.
 -->
 
 <!--
-	C,D,U,L: Mode change.
-	R: reset timer.
-	Space: Start and stop timer.
+	C,D,U,L: Mode change. (also available on menu)
+	R: reset timer. (also available on menu)
+	Space: Start and stop timer. (also available on menu)
 	A,M: Number of digits.
-	H: Show / hide status monitor.
 	0-9: Input numeric.
+	H: Show / hide status monitor.
 
 -->
 

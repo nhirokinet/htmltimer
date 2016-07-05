@@ -4,7 +4,3 @@ var initialDowntimer = 300;
 
 var defaultBlinkColon = true;
 var blinkAfterTime = true; 
-
-var firstAreaDigits = 2;
-
-var subSecondDigits = 2;

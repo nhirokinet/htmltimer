@@ -47,99 +47,39 @@ $(window).keydown(function(e){
 
 				mainDisplay.fixDisplayContent = [h, m, s];
 			}
-
 		}
 	}
 
 	if(e.which == 32 || e.which == 83) { // Space or S
-		timerInput = '';
-		if(mainDisplay.currentMode == MODE_DOWNTIMER) {
-			switch(wallTimer.downtimerStatus()) {
-		       		case STATUS_WAITING:
-					mainDisplay.fixDisplay = false;
-					wallTimer.startDowntimer();
-					break;
-
-				case STATUS_RUNNING:
-					mainDisplay.fixDisplay = false;
-					wallTimer.stopDowntimer();
-					break;
-
-				case STATUS_STOPPED:
-					mainDisplay.fixDisplay = false;
-					wallTimer.restartDowntimer();
-					break;
-			}
-		}
-		
-		if(mainDisplay.currentMode == MODE_UPTIMER) {
-			if(wallTimer.uptimerStatus() == STATUS_WAITING) {
-				mainDisplay.fixDisplay = false;
-				wallTimer.startUptimer();
-			} else if(wallTimer.uptimerStatus() == STATUS_RUNNING) {
-				wallTimer.stopUptimer();
-			} else if(wallTimer.uptimerStatus() == STATUS_STOPPED) {
-				wallTimer.restartUptimer();
-			}
-		}
-
-		if(mainDisplay.currentMode == MODE_DEADLINE) {
-			if (mainDisplay.fixDisplay) {
-				mainDisplay.fixDisplay = false;
-			} else {
-				dltimerInput = '';
-				mainDisplay.fixDisplay = true;
-			}
-		}
+		mainDisplay.startStop();
 	}
 
 	if(e.which == 67) { // C
-		mainDisplay.fixDisplay = false;
-		mainDisplay.currentMode = MODE_CLOCK;
-		timerInput = '';
+		mainDisplay.modeClock();
 	}
 
 	if(e.which == 68) { // D
-		mainDisplay.fixDisplay = false;
-		mainDisplay.currentMode = MODE_DOWNTIMER;
-		timerInput = '';
+		mainDisplay.modeDownTimer();
 	}
 
 	if(e.which == 85) { // U
-		mainDisplay.fixDisplay = false;
-		mainDisplay.currentMode = MODE_UPTIMER;
-		timerInput = '';
-	}
-
-	if(e.which == 77) { // M
-		if(subSecondDigits == 2) {
-			subSecondDigits = 0;
-		} else if(subSecondDigits == 0) {
-			subSecondDigits = 2;
-		}
-	}
-
-	if(e.which == 65) { // A
-		if(firstAreaDigits == 2) {
-			firstAreaDigits = 1;
-		} else if(firstAreaDigits == 1) {
-			firstAreaDigits = 2;
-		}
+		mainDisplay.modeUpTimer();
 	}
 
 	if(e.which == 76) { // L
-		if(wallTimer.deadlineTimerFinish == -1) {
-			mainDisplay.fixDisplay = true;
-		} else {
-			mainDisplay.fixDisplay = false;
-		}
-		mainDisplay.currentMode = MODE_DEADLINE;
-		timerInput = '';
+		mainDisplay.modeDeadlineTimer();
+	}
+
+	if(e.which == 77) { // M
+		mainDisplay.toggleSubSeconds();
+	}
+
+	if(e.which == 65) { // A
+		mainDisplay.toggleFirstAreaDigits();
 	}
 
 	if(e.which == 82) { // R
-		this.wallTimer.reset();
-		timerInput = '';
+		mainDisplay.reset();
 	}
 
 	if(e.which == 72) { // H
@@ -152,6 +92,5 @@ $(window).keydown(function(e){
 				
 		});
 	}
-
 });
 
